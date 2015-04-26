@@ -35,11 +35,15 @@ class Basketball {
 		void findTeamRatio();   //Used to find the ratio of games won for each team
 		void printAllTeams();   //Prints all teams in list with their win/lose ratio
 		void printTeamInfo(string teamName);  //Prints all information for a given team
-		void rankTeams();   //Ranks teams based on ratio
-		void printRankings();   //Prints teams in order of rankins
+		void ratioRankTeams();   //Ranks teams based on ratio
+		void printRankings(string type);   //Prints teams in order of rankings of given type
+		void makeRatioRankList();	//Creates linked list in order of ratio rankings
+		void makePointsRankList();	//Creates linked list in order of points rankings
 	protected:
 	private:
 		Team *head; //Pointer to list of teams
+		Team *ratioHead;	//Pointer to list of teams ranked by winlose ratio
+		Team *pointsHead;	//Pointer to list of teams ranked by points scored
 		Game *lead; //Pointer to list of games
 };
 

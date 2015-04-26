@@ -31,10 +31,11 @@ void inputData(char* title, Basketball* bball) {
 //Function to print operation choices
 void mainMenu() {
 	cout << "1. Find Team Information" << endl
-	<< "2. Print All Teams" << endl
-	<< "3. Find Team Information" << endl
-	<< "4. Print Team Rankings" << endl
-	<< "5. Quit Program" << endl;
+	<< "2. Find Team Rankings" << endl
+	<< "3. Print All Teams" << endl
+	<< "4. Find Team Information" << endl
+	<< "5. Print Team Rankings" << endl
+	<< "6. Quit Program" << endl;
 }
 
 int main(int argc, char * argv[]) {
@@ -44,7 +45,7 @@ int main(int argc, char * argv[]) {
 
 	bool cont = true;	//Choice for continuing program
 	int choice;	//User input of function to run
-	string input;	//Used for finding team info
+	string input;	//Used for finding further information
 	cout << "Option 1 must be the first function run to build information!" << endl;    //Announced necessary program start
 	while(cont) {
 		mainMenu();	//Print function options
@@ -57,24 +58,32 @@ int main(int argc, char * argv[]) {
 				bball->findTeamInfo();  //Finds all team info from game info
 				cout << "\tTeam information has been found!" << endl;
 				break;
+			
+			case 2:	//Finds ration and points rankings
+				cout << "Finding team rankings... " << endl;
+				bball->ratioRankTeams();
+				bball->makePointsRankList();
+				cout << "\tComplete!" << endl;
+				break;
 
-			case 2:	//Print all teams and their info
+			case 3:	//Print all teams and their info
 				bball->printAllTeams(); //Brints all teams and their win/games ratio
 				break;
 
-			case 3:	//Find Specific Team info
+			case 4:	//Find Specific Team info
 				cout << "Enter team name" << endl;
 				getline(cin, input);    //Cin team name to find
 				cout << "Searching... " << endl;
 				bball->printTeamInfo(input);    //Find team in list and print info
 				break;
 
-			case 4:	//Rank Teams
-				bball->rankTeams(); //Ranks teams based on ratio
-                bball->printRankings(); //Prints teams in order of ranking (1-30)
+			case 5:	//Print Ranking lists
+				cout << "Enter rank type ('ratios' or 'points')" << endl;
+				getline(cin, input);
+                bball->printRankings(input); //Prints teams in order of ranking (1-30)
                 break;
 
-			case 5:	//Quit Program
+			case 6:	//Quit Program
 				cout << "Goodbye!" << endl;
 				cont = false;
 				break;

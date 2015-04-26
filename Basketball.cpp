@@ -11,28 +11,30 @@ using namespace std;
 //Initializer
 Basketball::Basketball() {
 	head = NULL;	//Initially make Team's list null
+	ratioHead = NULL; 	//Initialize ratio ranked list null
+	pointsHead = NULL;	//Initialize points ranked list null
 	lead = NULL;	//Initially make game list null
 }
 
 Basketball::~Basketball() {
     //Delete list of games
-    Game* dels = new Game;
+    Game* dels = new Game;	//Temp list of games
     dels = lead;
-    Game* nexty = new Game;
-    while(dels) {
-        nexty = dels->next;
-        delete(dels);
-        dels = nexty;
+    Game* nexty = new Game;	//To hold next game in list
+    while(dels) {	//Go through list of games
+        nexty = dels->next;	//Set next pointer to the next game in list
+        delete(dels);	//Delete current game in list
+        dels = nexty;	//Set current to next to loop through
     }
 
     //Delete list of teams
-    Team* delTems = new Team;
+    Team* delTems = new Team;	//Temp list of teams
     delTems = head;
-    Team* nexter = new Team;
-    while(delTems) {
-        nexter = delTems->next;
-        delete(delTems);
-        delTems = nexter;
+    Team* nexter = new Team;	//Hold next team in list
+    while(delTems) {	//Go through list of teams
+        nexter = delTems->next;	//Set next pointer to next team in list
+        delete(delTems);	//Delete current team in list
+        delTems = nexter;	//Set current to next to loop through
     }
 }
 
@@ -68,7 +70,7 @@ void Basketball::addTeam(string name, int score, bool win) {
 //Function to find raw team data from games
 void Basketball::findTeamInfo() {
 	bool winOne, winTwo;	//Win loss info from game
-    Game *gameTemp = new Game;
+    Game *gameTemp = new Game;	//Temp list of games
     gameTemp = lead;
 	while(gameTemp) {	//Determing win loss information for each team
         bool newOne = true;	//To see if team one already exists
@@ -81,7 +83,7 @@ void Basketball::findTeamInfo() {
 			winOne = false;
 		}
 
-        Team *tmp = new Team;
+        Team *tmp = new Team;	//Temp list of teams updated for each game
         tmp = head;
 		while(tmp) {	//See if team already exists
 			if(tmp->name == gameTemp->teamOne) {    //If team one exists
@@ -107,14 +109,14 @@ void Basketball::findTeamInfo() {
 
 
 
-		if (newOne)	//If team one isnt found, add a new team
+		if (newOne)	//If team one isnt found, add as new team
 			addTeam(gameTemp->teamOne, gameTemp->scoreOne, winOne);
-		if(newTwo)	//If team two isnt found, add a new team
+		if(newTwo)	//If team two isnt found, add as new team
 			addTeam(gameTemp->teamTwo, gameTemp->scoreTwo, winTwo);
 
 		gameTemp = gameTemp->next;
 	}
-	findTeamRatio();    //Find win/lose ratio for all teams after all teams are entered
+	findTeamRatio();    //Find win/lose ratio for all teams after all teams are created
 }
 
 //Finds win/lose ratio for all teams and adds to struct
@@ -132,7 +134,7 @@ void Basketball::findTeamRatio() {
 
 //Prints the name of all teams in list along with their W/L ratio
 void Basketball::printAllTeams() {
-    if (head == NULL) {
+    if (head == NULL) {	//If list hasnt been built, quit function
         cout << "Team information not yet loaded. Run choice (1) first. " << endl;
         return;
     }
@@ -146,7 +148,7 @@ void Basketball::printAllTeams() {
 
 //Prints all information for a specified team
 void Basketball::printTeamInfo(string teamName) {
-    if (head == NULL) {
+    if (head == NULL) {	//If list hasnt been built, quit function
         cout << "Team information not yet loaded. Run choice (1) first. " << endl;
         return;
     }
@@ -168,19 +170,211 @@ void Basketball::printTeamInfo(string teamName) {
 }
 
 //Rank all teams based on win/lose ratio
-void Basketball::rankTeams() {
-	//
+void Basketball::ratioRankTeams() {
+	Team *finder = new Team;	//Create temp list of teams
+	Team *dupeFinder = new Team;
+	Team *ranker = new Team;	//Temp list of teams to go through
+	float highRat = 101;	//Highest ratio, to be updated
+
+	for(int i=1; i<=30; i++) {	//Go through all ranks to assign teams
+        int teamCtr = 0; //used to see if teams have same ratios
+		float newRatio = 0;	//Used to find correct team for rank
+
+		ranker = head;
+		while(ranker->next != NULL) {	//Finds highest ratio lower than the highest before it
+			if(ranker->ratios > newRatio && ranker->ratios < highRat)
+				newRatio = ranker->ratios;
+			ranker = ranker->next;
+		}
+
+		dupeFinder = head;
+		while(dupeFinder) {
+            if (dupeFinder->ratios == newRatio)
+                teamCtr++;
+            dupeFinder = dupeFinder->next;
+		}
+
+
+		finder = head;	//Temp list of teams to assert rank
+		if (teamCtr == 1) {
+            while(finder) {	//Go through all teams
+                if(finder->ratios == newRatio) {	//If we found the correct team
+                    finder->ranking = i;	//Set teams rank to current one being found
+                }
+                finder = finder->next;
+            }
+        } else if(teamCtr > 1) {
+            Team *dupes = new Team;
+            Team *duper = new Team;
+            Team *dupeList = new Team;
+            dupeList = NULL;
+            Team *reverser = new Team;
+            reverser = NULL;
+            int highPoints = 1000000;   //Impossibly high points
+            for (int j=0; j<teamCtr; j++) {
+                int curPoints = 0;
+                dupes = head;
+                while(dupes) {
+                    if (dupes->points > curPoints && dupes->points < highPoints && dupes->ratios == newRatio)
+                        curPoints = dupes->points;
+                    dupes = dupes->next;
+                }
+
+                duper = head;
+                while(duper) {
+                    if (duper->points == curPoints && duper->ratios == newRatio) {
+                        Team *tmp = new Team;
+                        tmp->name = duper->name;
+                        tmp->games = duper->games;
+                        tmp->wins = duper->wins;
+                        tmp->losses = duper->losses;
+                        tmp->points = duper->points;
+                        tmp->ratios = duper->ratios;
+                        tmp->ranking = duper->ranking;
+                        tmp->next = reverser;
+                        reverser = tmp;
+                    }
+                    highPoints = curPoints;
+                    duper = duper->next;
+                }
+            }
+
+            while(reverser) {
+                Team *temp = new Team;
+                temp->name = reverser->name;
+                temp->games = reverser->games;
+                temp->wins = reverser->wins;
+                temp->losses = reverser->losses;
+                temp->points = reverser->points;
+                temp->ratios = reverser->ratios;
+                temp->ranking = reverser->ranking;
+                temp->next = dupeList;
+                dupeList = temp;
+                reverser = reverser->next;
+            }
+
+            int k = i;
+            while (dupeList) {
+                while (finder) {
+                    if(finder->name == dupeList->name) {
+                        finder->ranking = k;
+                        k++;
+                    }
+                    finder = finder->next;
+                }
+                dupeList = dupeList->next;
+            }
+            i = i + (teamCtr - 1);
+        }
+
+		highRat = newRatio;	//Update high ratio limit to the one just found
+	}
+
+	makeRatioRankList();
 }
 
-//Function to print all team names in order of rank
-void Basketball::printRankings() {
-    Team *crawls = new Team;    //Create temp team list from head
-    crawls = head;
-	for (int i=1; i<=30; i++) { //Go through all ranks
-		while(crawls) {   //Go through all teams
-			if(crawls->ranking == i)    //If teams ranking equal to the wanted rank, print it
-				cout << i << ". " << head->name << endl;
-            crawls = crawls->next;
+//Creates linked list of teams based on ratio rankings
+void Basketball::makeRatioRankList() {
+	Team *ratioMaker = new Team;	//Temp list of teams
+	for(int i=30; i>=1; i--) {	//Go backwards through ranks to stack them into list
+		ratioMaker = head;	//Set temp list to head each iteration
+		while (ratioMaker) {	//Go though temp list
+			if (ratioMaker->ranking == i) {	//If node has desired rank
+				Team *newb = new Team;	//Create new team struct
+				newb->name = ratioMaker->name;	//Set info equal to current team node
+				newb->games = ratioMaker->games;
+				newb->wins = ratioMaker->wins;
+				newb->losses = ratioMaker->losses;
+				newb->points = ratioMaker->points;
+				newb->ratios = ratioMaker->ratios;
+				newb->ranking = i;
+				newb->next = ratioHead;	//Set next to ratio rank list
+				ratioHead = newb;		//Update list to include new node
+			}
+			ratioMaker = ratioMaker->next;
 		}
 	}
+}
+
+//Creates linked list of teams based on points rankings
+void Basketball::makePointsRankList() {
+	Team *pointsMaker = new Team;	//Temp list of teams
+	Team *pointsFinder = new Team;
+	Team *reverser = new Team;	//Temp used to reverse list after its built backwards
+	reverser = NULL;
+	int highPoints = 1000000;	//Impossibly high points ceiling
+	for (int i=0; i<30; i++) {
+		int curPoints = 0;
+		pointsMaker = head;
+		while(pointsMaker) {	//Go through list of teams to find highest wanted score
+			if (pointsMaker->points > curPoints && pointsMaker->points < highPoints)
+				curPoints = pointsMaker->points;
+			pointsMaker = pointsMaker->next;
+		}
+
+		pointsFinder = head;
+		while(pointsFinder) {
+			if (pointsFinder->points == curPoints) {
+				Team *tmp = new Team;
+				tmp->name = pointsFinder->name;
+				tmp->games = pointsFinder->games;
+				tmp->wins = pointsFinder->wins;
+				tmp->losses = pointsFinder->losses;
+				tmp->points = pointsFinder->points;
+				tmp->ratios = pointsFinder->ratios;
+				tmp->ranking = pointsFinder->ranking;
+				tmp->next = reverser;
+				reverser = tmp;
+			}
+
+			highPoints = curPoints;
+			pointsFinder = pointsFinder->next;
+		}
+	}
+
+	while(reverser) {
+		Team *temp = new Team;
+		temp->name = reverser->name;
+		temp->games = reverser->games;
+		temp->wins = reverser->wins;
+		temp->losses = reverser->losses;
+		temp->points = reverser->points;
+		temp->ratios = reverser->ratios;
+		temp->ranking = reverser->ranking;
+		temp->next = pointsHead;
+		pointsHead = temp;
+		reverser = reverser->next;
+	}
+}
+
+
+//Function to print all team names in order of rank
+void Basketball::printRankings(string type) {
+	if(type == "ratios") {
+		if (ratioHead == NULL) {	//Return if list not yet created
+			cout << "Ratio rankings not yet found. Please find them first" << endl;
+			return;
+		}
+    	Team *crawls = new Team;    //Create temp team list from head of ratio ranks
+    	crawls = ratioHead;
+		while(crawls) {   //Go through all teams
+			cout << crawls->ranking << ". " << crawls->name << endl;	//Print all teams and rank
+            crawls = crawls->next;
+		}
+	} else if (type == "points") {
+		if (pointsHead == NULL) {	//Return if list not yet created
+			cout << "Points rankings not yet found. Please find them first" << endl;
+			return;
+		}
+		Team *crawls = new Team;	//Create temp list from head of points ranks
+		crawls = pointsHead;
+		while (crawls) {
+			cout << crawls->points << " points for " << crawls->name << endl;
+			crawls = crawls->next;
+		}
+	} else {
+		cout << "Invalid input. Come on!" << endl;
+		return;
+	}
+
 }
