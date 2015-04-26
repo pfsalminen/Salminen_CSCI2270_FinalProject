@@ -12,7 +12,7 @@ struct Team {	//Team information
 	int wins;	//Number of wins
 	int losses;
 	int points;	//Total points scored
-	float ratio;
+	float ratios;
 	int ranking;
 	Team *next;
 };

@@ -22,7 +22,6 @@ void inputData(char* title, Basketball* bball) {
 		getline(in_stream, tempScoreOne, '\t');
 		getline(in_stream, team2, '\t');
 		getline(in_stream, tempScoreTwo);
-		cout << team1 << " " << tempScoreOne << " " << team2 << " " << tempScoreTwo << endl;
 		bball->addGame(team1, atoi(tempScoreOne.c_str()), team2, atoi(tempScoreTwo.c_str()));	//Add game to head;
 	}
 	in_stream.close();
@@ -40,7 +39,7 @@ void mainMenu() {
 
 int main(int argc, char * argv[]) {
 	char* fileName = argv[1]; 	//Command line argument filename
-	Basketball* bball;	//Create instance of class
+	Basketball* bball =  new Basketball;	//Create instance of class
 	inputData(fileName, bball);
 
 	bool cont = true;	//Choice for continuing program
@@ -49,10 +48,13 @@ int main(int argc, char * argv[]) {
 	char yn;
 	while(cont) {
 		mainMenu();	//Print function options
-		cin >> choice;	//Input function choice
+		cin >> choice;
+		cin.clear();
+        cin.ignore(1000, '\n');	//Input function choice
 		switch(choice) {
 			case 1:	//Find team info from game info
 				bball->findTeamInfo();
+				bball->findTeamRatio();
 				break;
 
 			case 2:	//Print all teams and their info

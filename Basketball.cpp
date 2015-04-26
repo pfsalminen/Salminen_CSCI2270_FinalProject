@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <math.h>
+#include <stdio.h>
 #include "Basketball.h"
 using namespace std;
 
@@ -28,8 +30,10 @@ void Basketball::findTeamInfo() {
 	bool newOne = true;	//To see if team one already exists
 	bool newTwo = true;	//See if team two exists
 	bool winOne, winTwo;	//Win loss info from game
-	while(lead) {	//Determing win loss information for each team
-		if(lead->scoreOne > lead->scoreTwo) {	//Determine win lose info
+    Game *gameTemp = new Game;
+    gameTemp = lead;
+	while(gameTemp) {	//Determing win loss information for each team
+		if(gameTemp->scoreOne > gameTemp->scoreTwo) {	//Determine win lose info
 			winOne = true;
 			winTwo = false;
 		} else {
@@ -37,36 +41,36 @@ void Basketball::findTeamInfo() {
 			winOne = false;
 		}
 
-		while(head) {	//See if team already exists
-			if(head->name == lead->teamOne) {	//If team one exists
+        Team *tmp = new Team;
+        tmp = head;
+		while(tmp) {	//See if team already exists
+			if(tmp->name == gameTemp->teamOne) {	//If team one exists
 				newOne = false;	//Team is found
-				head->games++;		//Update team information
-				head->points = head->points + lead->scoreOne;
+				tmp->games++;		//Update team information
+				tmp->points = tmp->points + gameTemp->scoreOne;
 				if (winOne)
-					head->wins++;
+					tmp->wins++;
 				else
-					head->losses++;
-			}else if(head->name == lead->teamTwo) {	//If team two exists
+					tmp->losses++;
+            }
+			if(tmp->name == gameTemp->teamTwo) {	//If team two exists
 				newTwo = false;	//Team is found
-				head->games++;	//Update team information
-				head->points = head->points + lead->scoreTwo;
+				tmp->games++;	//Update team information
+				tmp->points = tmp->points + gameTemp->scoreTwo;
 				if (winTwo)
-					head->wins++;
+					tmp->wins++;
 				else
-					head->losses++;
+					tmp->losses++;
 			}
-			head = head->next;
+			tmp = tmp->next;
 		}
-
 		if (newOne)	//If team one isnt found, add a new team
-			addTeam(lead->teamOne, lead->scoreOne, winOne);
+			addTeam(gameTemp->teamOne, gameTemp->scoreOne, winOne);
 		if(newTwo)	//If team two isnt found, add a new team
-			addTeam(lead->teamTwo, lead->scoreTwo, winOne);
+			addTeam(gameTemp->teamTwo, gameTemp->scoreTwo, winTwo);
 
-		lead = lead->next;
+		gameTemp = gameTemp->next;
 	}
-
-	findTeamRatio();
 }
 
 //Add a new team to the linked list
@@ -88,33 +92,41 @@ void Basketball::addTeam(string name, int score, bool win) {
 }
 
 void Basketball::findTeamRatio() {
-	while(head) {
-		head->ratio = (head->wins / head->games) * 100;
-		head = head->next;
+    Team *tmp = new Team;
+    tmp = head;
+    float tempy;
+	while(tmp != NULL) {
+        tempy = ((float)tmp->wins / (float)tmp->games) * 100;
+        tempy = floor(tempy * 100) / 100;
+        tmp->ratios = tempy;
+		tmp = tmp->next;
 	}
 }
 
-
 void Basketball::printAllTeams() {
-	while(head) {
-		cout << head->name << head->ratio << head->points << endl;
-		head = head->next;
+    Team *crawler = new Team;
+    crawler = head;
+	while(crawler->next != NULL) {
+		cout << "Team: " << crawler->name << " Win/Lose Ratio: " << crawler->ratios  << "%"<< endl;
+		crawler = crawler->next;
 	}
 }
 
 void Basketball::printTeamInfo(string teamName) {
-	while(head) {
-		if(head->name == teamName) {
-			cout << "Team Name " << head->name << endl
-				<< "Games played " << head->games << endl
-				<< "Games won " << head->wins << endl
-				<< "Games lost " << head->losses << endl
-				<< "Win/lose ratio " << head->ratio << endl
-				<< "Total Points scored " << head->points << endl;
+    Team *printer = new Team;
+    printer = head;
+	while(printer) {
+		if(printer->name == teamName) {
+			cout << "Team Name: " << printer->name << endl
+				<< "Games played: " << printer->games << endl
+				<< "Games won: " << printer->wins << endl
+				<< "Games lost: " << printer->losses << endl
+				<< "Win/lose ratio: " << printer->ratios << "%" << endl
+				<< "Total Points scored: " << printer->points << endl;
 			if(head->ranking != -1)
-				cout << "Team Ranking " << head->ranking << endl;
+				cout << "Team Ranking: " << printer->ranking << endl;
 		}
-		head = head->next;
+		printer = printer->next;
 	}
 }
 
@@ -132,41 +144,3 @@ void Basketball::printRankings() {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
