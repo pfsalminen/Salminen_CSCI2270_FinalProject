@@ -8,7 +8,7 @@
 #include "Basketball.h"
 using namespace std;
 
-//Initializer
+//Initializer to run when creating new class instance
 Basketball::Basketball() {
 	head = NULL;	//Initially make Team's list null
 	ratioHead = NULL; 	//Initialize ratio ranked list null
@@ -16,6 +16,7 @@ Basketball::Basketball() {
 	lead = NULL;	//Initially make game list null
 }
 
+//Deconstructor to end class
 Basketball::~Basketball() {
     //Delete list of games
     Game* dels = new Game;	//Temp list of games
@@ -38,7 +39,10 @@ Basketball::~Basketball() {
     }
 }
 
-//Add a new game to the linked list
+/*Addsa new game to the linked list
+This is called automatically when function starts
+it takes in the team names and scores from each game
+From there, it will will create a linked list of every game*/
 void Basketball::addGame(string team1, int score1, string team2, int score2) {
 	Game *n = new Game; //Create temp struct
 	n->teamOne = team1; //Set all game info into struct
@@ -49,7 +53,10 @@ void Basketball::addGame(string team1, int score1, string team2, int score2) {
 	lead = n;   //Set list equal to new head
 }
 
-//Add a new team to the linked list
+/*Add a new team to the linked list
+This is run automatically when building the team information
+It takes in the team name, the score of each game, and whether it was a win or lose
+From this information it will create a new team in the linked list with this initial information*/
 void Basketball::addTeam(string name, int score, bool win) {
 	Team *temp = new Team;  //Create temp team struct
 	temp->name = name;  //Set initial info
@@ -67,7 +74,13 @@ void Basketball::addTeam(string name, int score, bool win) {
 	head = temp;    //Update the head list
 }
 
-//Function to find raw team data from games
+/*Function to find raw team data from games
+ This is run when the user chooses option 1
+ There are no real inputs for this
+ It uses the linked list of games
+ From there, it either creates a new team in the list
+ if it has not been created yet, or it updates the existing team
+with the information from each game*/
 void Basketball::findTeamInfo() {
 	bool winOne, winTwo;	//Win loss info from game
     Game *gameTemp = new Game;	//Temp list of games
@@ -119,7 +132,10 @@ void Basketball::findTeamInfo() {
 	findTeamRatio();    //Find win/lose ratio for all teams after all teams are created
 }
 
-//Finds win/lose ratio for all teams and adds to struct
+/*Finds win/lose ratio for all teams and adds to struct
+This is called at the end of building the linked list
+It goes through the list of teams and finds the percentage
+of games won to two decimal places*/
 void Basketball::findTeamRatio() {
     Team *tmp = new Team;   //Create temp list from head
     tmp = head;
@@ -132,7 +148,10 @@ void Basketball::findTeamRatio() {
 	}
 }
 
-//Prints the name of all teams in list along with their W/L ratio
+/*Prints the name of all teams in list along with their W/L ratio
+This is called when the user chooses option two
+There are no inputs for the user to do
+It goes through the list and prints every team name and percentage of games won*/
 void Basketball::printAllTeams() {
     Team *crawler = new Team;   //Create temp list for printing equal to head
     crawler = head;
@@ -142,7 +161,12 @@ void Basketball::printAllTeams() {
 	}
 }
 
-//Prints all information for a specified team
+/*Prints all information for a specified team
+This is another function a user can directly call
+Before it is called, the user is prompted to enter a team name
+It must be entered as City Team, each capitalized
+From there, it goes through the list to find the team name
+Once found, it prints all the information of a given team*/
 void Basketball::printTeamInfo(string teamName) {
     Team *printer = new Team;   //Create temp head to go through list
     printer = head;
@@ -166,7 +190,13 @@ void Basketball::printTeamInfo(string teamName) {
 	}
 }
 
-//Rank all teams based on win/lose ratio
+/*Rank all teams based on win/lose ratio
+This is another function the user can call
+It will assign a ranking to every team primarily based on percentage of games one
+If this percentage is equal, it will be distiguished by points scored
+There are no inputs the user needs to give
+After the ranks are found, it calls a function to create 
+a linked list in order of decreasing ranks*/
 void Basketball::ratioRankTeams() {
 	Team *finder = new Team;	//Create temp list of teams
 	Team *dupeFinder = new Team;
@@ -200,27 +230,27 @@ void Basketball::ratioRankTeams() {
                 }
                 finder = finder->next;
             }
-        } else if(teamCtr > 1) {
-            Team *dupes = new Team;
+        } else if(teamCtr > 1) {	//If more than one team has same ratio, sort by points
+            Team *dupes = new Team;	//Create temp pointers to loop through
             Team *duper = new Team;
             Team *dupeList = new Team;
-            dupeList = NULL;
+            dupeList = NULL;	//Originall null to build list
             Team *reverser = new Team;
-            reverser = NULL;
+            reverser = NULL;	//Originally null to build list
             int highPoints = 1000000;   //Impossibly high points
             for (int j=0; j<teamCtr; j++) {
                 int curPoints = 0;
                 dupes = head;
-                while(dupes) {
+                while(dupes) {	//Loop through list of teams and find current points
                     if (dupes->points > curPoints && dupes->points < highPoints && dupes->ratios == newRatio)
                         curPoints = dupes->points;
                     dupes = dupes->next;
                 }
 
                 duper = head;
-                while(duper) {
-                    if (duper->points == curPoints && duper->ratios == newRatio) {
-                        Team *tmp = new Team;
+                while(duper) {	
+                    if (duper->points == curPoints && duper->ratios == newRatio) {	//If team has same ratioa and points
+                        Team *tmp = new Team;	//Add team to temp list
                         tmp->name = duper->name;
                         tmp->games = duper->games;
                         tmp->wins = duper->wins;
@@ -231,12 +261,12 @@ void Basketball::ratioRankTeams() {
                         tmp->next = reverser;
                         reverser = tmp;
                     }
-                    highPoints = curPoints;
+                    highPoints = curPoints;	//Update points ceiling
                     duper = duper->next;
                 }
             }
 
-            while(reverser) {
+            while(reverser) {	//Reverse list of teams
                 Team *temp = new Team;
                 temp->name = reverser->name;
                 temp->games = reverser->games;
@@ -250,27 +280,31 @@ void Basketball::ratioRankTeams() {
                 reverser = reverser->next;
             }
 
-            int k = i;
-            while (dupeList) {
-                while (finder) {
-                    if(finder->name == dupeList->name) {
-                        finder->ranking = k;
-                        k++;
+            int k = i;	//Ranking variable
+            while (dupeList) {	//Go through the now correct ordered list
+                while (finder) {	//Go through all teams
+                    if(finder->name == dupeList->name) {'
+                        finder->ranking = k;	//Assign team rank
+                        k++;	//Increase ranking variable for the next team of same ratio
                     }
                     finder = finder->next;
                 }
                 dupeList = dupeList->next;
             }
-            i = i + (teamCtr - 1);
+            i = i + (teamCtr - 1);	//Update i to account for multiple teams of same ratio
         }
 
 		highRat = newRatio;	//Update high ratio limit to the one just found
 	}
 
-	makeRatioRankList();
+	makeRatioRankList();	//Make linked list in order of ranking
 }
 
-//Creates linked list of teams based on ratio rankings
+/*Creates linked list of teams based on ratio rankings
+This is called after ranking information is found
+It goes through the available ranks and all teams
+and adds each team in order of increasing rank, with #1 first
+There are no inputs needed, and it is called automatically*/
 void Basketball::makeRatioRankList() {
 	Team *ratioMaker = new Team;	//Temp list of teams
 	for(int i=30; i>=1; i--) {	//Go backwards through ranks to stack them into list
@@ -293,7 +327,11 @@ void Basketball::makeRatioRankList() {
 	}
 }
 
-//Creates linked list of teams based on points rankings
+/*Creates linked list of teams based on points rankings
+This is also called when the user says to find ranking information
+There are no inputs needed. It goes through every team and builds
+a list in order of increasing points, by stacking teams, then it
+reverses the list to be in the correct order*/
 void Basketball::makePointsRankList() {
 	Team *pointsMaker = new Team;	//Temp list of teams
 	Team *pointsFinder = new Team;
@@ -310,9 +348,9 @@ void Basketball::makePointsRankList() {
 		}
 
 		pointsFinder = head;
-		while(pointsFinder) {
+		while(pointsFinder) {	//find teams with wanted points for this position
 			if (pointsFinder->points == curPoints) {
-				Team *tmp = new Team;
+				Team *tmp = new Team;	//Create temp team to add
 				tmp->name = pointsFinder->name;
 				tmp->games = pointsFinder->games;
 				tmp->wins = pointsFinder->wins;
@@ -320,16 +358,16 @@ void Basketball::makePointsRankList() {
 				tmp->points = pointsFinder->points;
 				tmp->ratios = pointsFinder->ratios;
 				tmp->ranking = pointsFinder->ranking;
-				tmp->next = reverser;
+				tmp->next = reverser;	//Stack to list
 				reverser = tmp;
 			}
 
-			highPoints = curPoints;
+			highPoints = curPoints;	//Update point ceiling
 			pointsFinder = pointsFinder->next;
 		}
 	}
 
-	while(reverser) {
+	while(reverser) {	//Reverse stacked list to correct order
 		Team *temp = new Team;
 		temp->name = reverser->name;
 		temp->games = reverser->games;
@@ -345,7 +383,12 @@ void Basketball::makePointsRankList() {
 }
 
 
-//Function to print all team names in order of rank
+/*Function to print all team names in order of rank
+This will print the ranking order of teams,either by points or ratios
+When this function is called, the user will by prompted to enter the 
+type of list they wish to see. 
+The ratio ranking list shows the rank position, team name, and ratio
+The points ranking list shows the rank position, team name, and points scored*/
 void Basketball::printRankings(string type) {
 	if(type == "ratios") {
 		if (ratioHead == NULL) {	//Return if list not yet created
@@ -382,47 +425,57 @@ void Basketball::printRankings(string type) {
 
 }
 
+
+/*Function to see if the head of the list of teams is null (If it has not been built)
+This is a simply function to see if the list of teams has been built yet or not
+It is called before most operations are performed from the main function
+It it returns false, it will prevent other functions from running so there are no issues*/
 bool Basketball::checkHead() {
 	if (head == NULL) {	//If list hasnt been built, quit function
         cout << "Team information not yet loaded. Run find them first (Option 1). " << endl;
 		return false;
-	} else
+	} else	//Its built!
 		return true;
 }
 
+/*Function to compare the two different types of rankings
+This is another function the user can choose to perform
+It takes in the team name they wish to evaluate entertered as
+"City Team", it then finds the ratio and points ranking positions, and displays is
+After that, an analysis is done to see which rank is higher, and display the difference*/
 void Basketball::compareHeads(string name) {
-    Team *tempPoint = new Team;
+    Team *tempPoint = new Team;	//temp list ordered by points
     tempPoint = pointsHead;
-    Team *tempRatio = new Team;
+    Team *tempRatio = new Team;	//temp list ordered by ratio
     tempRatio = ratioHead;
-    int diff;
-    int ratRank = 0;
-    int pointRank = 0;
-    int i = 1;
+    int diff;	//Difference between ranking position
+    int ratRank = 0;	//Declare rank holder
+    int pointRank = 0;	//Declare rank holder
+    int i = 1;	//Used for finding the point ranking
     while(tempRatio) {
-        if(tempRatio->name == name) {
+        if(tempRatio->name == name) {	//Find desired ratio rank
             ratRank = tempRatio->ranking;
         }
         tempRatio = tempRatio->next;
     }
     while(tempPoint) {
-        if (tempPoint->name == name)
+        if (tempPoint->name == name)	//Find desired point rank
             pointRank = i;
         i++;
         tempPoint = tempPoint->next;
     }
-    if (ratRank == 0 || pointRank == 0) {
+    if (ratRank == 0 || pointRank == 0) {	//If team ranks not found
         cout << "Team not found. Try again" << endl;
         return;
     }
-    cout << name << ":\n\t Ratio rank - " << ratRank << "\n\t Point Rank - " << pointRank << endl;
-    if (ratRank == pointRank)
+    cout << name << ":\n\t Ratio rank - " << ratRank << "\n\t Point Rank - " << pointRank << endl;	//Print team rankings
+    if (ratRank == pointRank)	//If ranks are the same
         cout << "They're the same!" << endl;
     else {
-        if (ratRank > pointRank) {
+        if (ratRank > pointRank) {	//If Ratio is higher, find difference and display
             diff = ratRank - pointRank;
             cout << name << "'s ratio rank is " << diff << " places higher than their point rank." << endl;
-        } else {
+        } else {	//If Point rank is higher, find difference and display
             diff = pointRank - ratRank;
             cout << name << "'s point rank is " << diff << " places higher than their ratio rank." << endl;
         }
