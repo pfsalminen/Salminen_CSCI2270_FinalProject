@@ -134,10 +134,6 @@ void Basketball::findTeamRatio() {
 
 //Prints the name of all teams in list along with their W/L ratio
 void Basketball::printAllTeams() {
-    if (head == NULL) {	//If list hasnt been built, quit function
-        cout << "Team information not yet loaded. Run choice (1) first. " << endl;
-        return;
-    }
     Team *crawler = new Team;   //Create temp list for printing equal to head
     crawler = head;
 	while(crawler->next != NULL) {  //Go through list
@@ -148,12 +144,9 @@ void Basketball::printAllTeams() {
 
 //Prints all information for a specified team
 void Basketball::printTeamInfo(string teamName) {
-    if (head == NULL) {	//If list hasnt been built, quit function
-        cout << "Team information not yet loaded. Run choice (1) first. " << endl;
-        return;
-    }
     Team *printer = new Team;   //Create temp head to go through list
     printer = head;
+	bool display = true;
 	while(printer) {    //Go through list
 		if(printer->name == teamName) { //Print all information in teams struct if its the wanted team
 			cout << "\nTeam Name: " << printer->name << endl
@@ -164,8 +157,12 @@ void Basketball::printTeamInfo(string teamName) {
 				<< "Total Points scored: " << printer->points << endl;
 			if(printer->ranking != -1)  //Print team ranking if rankings have been found
 				cout << "Team Ranking: " << printer->ranking << endl;
+			display = false;
 		}
 		printer = printer->next;
+	}
+	if(display) {
+		cout << "Team not found. Try again!" << endl;
 	}
 }
 
@@ -352,29 +349,82 @@ void Basketball::makePointsRankList() {
 void Basketball::printRankings(string type) {
 	if(type == "ratios") {
 		if (ratioHead == NULL) {	//Return if list not yet created
-			cout << "Ratio rankings not yet found. Please find them first" << endl;
+			cout << "Ratio rankings not yet found. Please find them first (Option 2)." << endl;
 			return;
 		}
     	Team *crawls = new Team;    //Create temp team list from head of ratio ranks
     	crawls = ratioHead;
+    	cout << "Ratio Rankings:" << endl;
 		while(crawls) {   //Go through all teams
-			cout << crawls->ranking << ". " << crawls->name << endl;	//Print all teams and rank
+			cout << "\t" << crawls->ranking << ". " << crawls->name << " - " << crawls->ratios << endl;	//Print all teams and rank
             crawls = crawls->next;
 		}
+		cout << endl;
 	} else if (type == "points") {
 		if (pointsHead == NULL) {	//Return if list not yet created
-			cout << "Points rankings not yet found. Please find them first" << endl;
+			cout << "Points rankings not yet found. Please find them first (Option 2)." << endl;
 			return;
 		}
 		Team *crawls = new Team;	//Create temp list from head of points ranks
 		crawls = pointsHead;
+		int num = 1;
+		cout << "Points Rankings:" << endl;
 		while (crawls) {
-			cout << crawls->points << " points for " << crawls->name << endl;
+			cout << "\t" << num << ". " << crawls->name << " - " << crawls->points << " points" << endl;
 			crawls = crawls->next;
+			num++;
 		}
+		cout << endl;
 	} else {
-		cout << "Invalid input. Come on!" << endl;
+		cout << "Invalid input. Try Again!" << endl;
 		return;
 	}
 
+}
+
+bool Basketball::checkHead() {
+	if (head == NULL) {	//If list hasnt been built, quit function
+        cout << "Team information not yet loaded. Run find them first (Option 1). " << endl;
+		return false;
+	} else
+		return true;
+}
+
+void Basketball::compareHeads(string name) {
+    Team *tempPoint = new Team;
+    tempPoint = pointsHead;
+    Team *tempRatio = new Team;
+    tempRatio = ratioHead;
+    int diff;
+    int ratRank = 0;
+    int pointRank = 0;
+    int i = 1;
+    while(tempRatio) {
+        if(tempRatio->name == name) {
+            ratRank = tempRatio->ranking;
+        }
+        tempRatio = tempRatio->next;
+    }
+    while(tempPoint) {
+        if (tempPoint->name == name)
+            pointRank = i;
+        i++;
+        tempPoint = tempPoint->next;
+    }
+    if (ratRank == 0 || pointRank == 0) {
+        cout << "Team not found. Try again" << endl;
+        return;
+    }
+    cout << name << ":\n\t Ratio rank - " << ratRank << "\n\t Point Rank - " << pointRank << endl;
+    if (ratRank == pointRank)
+        cout << "They're the same!" << endl;
+    else {
+        if (ratRank > pointRank) {
+            diff = ratRank - pointRank;
+            cout << name << "'s ratio rank is " << diff << " places higher than their point rank." << endl;
+        } else {
+            diff - pointRank - ratRank;
+            cout << name << "'s point rank is " << diff << " places higher than their ratio rank." << endl;
+        }
+    }
 }

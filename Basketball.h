@@ -39,6 +39,8 @@ class Basketball {
 		void printRankings(string type);   //Prints teams in order of rankings of given type
 		void makeRatioRankList();	//Creates linked list in order of ratio rankings
 		void makePointsRankList();	//Creates linked list in order of points rankings
+		bool checkHead();	//Function to see if team list has been made
+		void compareHeads(string name);
 	protected:
 	private:
 		Team *head; //Pointer to list of teams
