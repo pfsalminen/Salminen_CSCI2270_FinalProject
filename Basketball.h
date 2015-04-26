@@ -13,6 +13,7 @@ struct Team {	//Team information
 	int losses;
 	int points;	//Total points scored
 	float ratio;
+	int ranking;
 	Team *next;
 };
 
@@ -22,15 +23,19 @@ struct Game {	//Struct to hold info for each game
 	int scoreOne;	//First teams score
 	int scoreTwo;	//Second teams score
 	Game *next;	//Next game
-}
+};
 
-class Baskeball {
-	public:	
+class Basketball {
+	public:
 		Basketball();
-		void addGame(string team1, int score1, string team1, int score1);
+		void addGame(string team1, int score1, string team2, int score2);
 		void addTeam(string name, int score, bool win);
 		void findTeamInfo();
 		void findTeamRatio();
+		void printAllTeams();
+		void printTeamInfo(string teamName);
+		void rankTeams();
+		void printRankings();
 	protected:
 	private:
 		Team *head;

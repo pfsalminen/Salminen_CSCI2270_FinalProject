@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "Basketball.h"
 using namespace std;
 
 //Initializer
@@ -12,7 +13,7 @@ Basketball::Basketball() {
 }
 
 //Add a new game to the linked list
-void Basketball::addGame(string team1, int score1, string team1, int score1) {
+void Basketball::addGame(string team1, int score1, string team2, int score2) {
 	Game *n = new Game;
 	n->teamOne = team1;
 	n->scoreOne = score1;
@@ -49,7 +50,7 @@ void Basketball::findTeamInfo() {
 				newTwo = false;	//Team is found
 				head->games++;	//Update team information
 				head->points = head->points + lead->scoreTwo;
-				if (winTwo) 
+				if (winTwo)
 					head->wins++;
 				else
 					head->losses++;
@@ -61,7 +62,7 @@ void Basketball::findTeamInfo() {
 			addTeam(lead->teamOne, lead->scoreOne, winOne);
 		if(newTwo)	//If team two isnt found, add a new team
 			addTeam(lead->teamTwo, lead->scoreTwo, winOne);
-			
+
 		lead = lead->next;
 	}
 
@@ -70,9 +71,10 @@ void Basketball::findTeamInfo() {
 
 //Add a new team to the linked list
 void Basketball::addTeam(string name, int score, bool win) {
-	Team *temp = new team;
+	Team *temp = new Team;
 	temp->name = name;
 	temp->games = 1;
+	temp->ranking = -1;
 	temp->points = score;
 	if (win) {
 		temp->wins = 1;
@@ -87,18 +89,49 @@ void Basketball::addTeam(string name, int score, bool win) {
 
 void Basketball::findTeamRatio() {
 	while(head) {
-		head->ratio = wins / games; 
+		head->ratio = (head->wins / head->games) * 100;
 		head = head->next;
 	}
 }
 
 
+void Basketball::printAllTeams() {
+	while(head) {
+		cout << head->name << head->ratio << head->points << endl;
+		head = head->next;
+	}
+}
 
+void Basketball::printTeamInfo(string teamName) {
+	while(head) {
+		if(head->name == teamName) {
+			cout << "Team Name " << head->name << endl
+				<< "Games played " << head->games << endl
+				<< "Games won " << head->wins << endl
+				<< "Games lost " << head->losses << endl
+				<< "Win/lose ratio " << head->ratio << endl
+				<< "Total Points scored " << head->points << endl;
+			if(head->ranking != -1)
+				cout << "Team Ranking " << head->ranking << endl;
+		}
+		head = head->next;
+	}
+}
 
+//Rank all teams based on win/lose ratio
+void Basketball::rankTeams() {
+	//
+}
 
-
-
-
+//Function to print all team names in order of rank
+void Basketball::printRankings() {
+	for (int i=1; i<=30; i++) {
+		while(head) {
+			if(head->ranking == i)
+				cout << i << ". " << head->name << endl;
+		}
+	}
+}
 
 
 
