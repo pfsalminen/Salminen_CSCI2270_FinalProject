@@ -423,7 +423,7 @@ void Basketball::compareHeads(string name) {
             diff = ratRank - pointRank;
             cout << name << "'s ratio rank is " << diff << " places higher than their point rank." << endl;
         } else {
-            diff - pointRank - ratRank;
+            diff = pointRank - ratRank;
             cout << name << "'s point rank is " << diff << " places higher than their ratio rank." << endl;
         }
     }
