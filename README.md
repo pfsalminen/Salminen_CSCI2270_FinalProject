@@ -9,12 +9,17 @@ In this project, we will be creating a class to analyze Basketball information t
 This project was completed using multiple linked lists. While this is a simple way to store the data, it is very efficient for going through all the information, which is common in the program. 
 It's also worth noting that the tsv file was created based on the following website: http://www.landofbasketball.com/results/2014_2015_scores_full.htm
 
+#### Contributors
+The website "http://landofbasketball.com" for providing the information supplied
+
 ### How to run:
-The information will come from a tsv file, and  will be inputted as a command line arguement. From there, you will be given choices of different kinds of information to find, along with different ways to display it. 
+The information will come from a tsv file, and  will be inputted as a command line arguement. From there, you will be given choices of different kinds of information to find, along with different ways to display it. The documentation for every function is described in detail in the "Basketball.cpp" file.
 
 ### System Requirements:
 This project was built on Fedora Linux and Mac. However, there should be no requirements to run this program except for a c++ compiler.
 
+#### Dependencies
+Nothing specifically. A C++ compiler is a necessity.
 
-
-
+#### Open Issues/Bugs
+There are no real issues or bugs. Every obvious user issue has been addressed. However, better memory handling woud be very nice (read: beneficial). As for enhancements, just some simple analysis/views have been done, there are limitless more things to find with this data.
